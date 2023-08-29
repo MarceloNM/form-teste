@@ -1,0 +1,83 @@
+
+<section>
+  <h3>Formulário com dez campos de preenchimento obrigatório</h3><br/><br/>
+  <form #theForm="ngForm">
+    <label for="nome">Nome:</label>
+    <input #name="ngModel" required name="nome" [(ngModel)]="cliente.nome" type="text" placeholder="nome" size="40"><br/>
+    <em *ngIf="name.invalid && name.touched">O nome é obrigatório</em><br/>
+
+    <label for="email">Email:</label>
+    <input #email="ngModel" required name="email" [(ngModel)]="cliente.email" type="text" placeholder="email" size="30"
+    pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"> <br/>
+    <em *ngIf="email.errors?.['pattern'] && email.touched">Necessário e-mail válido</em>
+    <em *ngIf="email.errors?.['required'] && email.touched">O e-mail obrigatório</em><br/>
+
+    <label for="nif">NIF:</label>
+    <input #nif="ngModel" required name="nif" [(ngModel)]="cliente.nif" type="text" placeholder="NIF" size="8">
+    <em *ngIf="nif.invalid && nif.touched">O NIF é obrigatório</em><br/><br/>
+
+    <label for="datanasc">Data de nascimento:</label>
+    <input #datanasc="ngModel" required name="datanasc" [(ngModel)]="cliente.datanasc" type="date" placeholder="Data">
+    <em *ngIf="datanasc.invalid && datanasc.touched">A data de nascimento é obrigatória</em><br/><br/>
+
+    <label for="pais">País: </label>
+    <select #pais="ngModel" required name="pais" type="select" [(ngModel)]="cliente.pais">
+      <option *ngFor="let option of paises"
+        [ngValue]="option.nomePais">{{option.nomePais}}</option>
+    </select> <br/>
+    <em *ngIf="pais.invalid && pais.touched">O país é obrigatório</em><br/>
+
+    <label for="cidade">Cidade: </label>
+    <select #cidade="ngModel" required name="cidade" type="select" [(ngModel)]="cliente.cidade">
+      <ng-container *ngFor="let p of paises; let i = index">
+        <ng-container *ngIf="p.nomePais === cliente.pais" --> 
+        <option
+           *ngFor="let option of p.cidades"
+            [ngValue]="option.nomeCidade">{{ option.nomeCidade }}</option>
+        </ng-container>
+      </ng-container>
+    </select> <br/>
+    <em *ngIf="cidade.invalid && cidade.touched">A cidade é obrigatória</em><br/>
+    
+    <label for="endereco">Endereço:</label>
+    <input #endereco="ngModel" required name="endereco" [(ngModel)]="cliente.endereco" type="text" placeholder="Endereço" size="40"><br/>
+    <em *ngIf="endereco.invalid && endereco.touched">O endereço é obrigatório</em><br/>
+    
+    <label for="codpostal">Código Postal:</label>
+    <input #codpostal="ngModel" required name="codpostal" [(ngModel)]="cliente.codpostal" type="text" placeholder="Código Postal"
+    pattern="^\d{4}(-\d{3})?$" size="10">
+    <em *ngIf="codpostal.errors?.['pattern'] && codpostal.touched && cliente.pais === 'Portugal'">Necessário Código Postal válido</em>
+    <em *ngIf="codpostal.errors?.['required'] && codpostal.touched">O Código Postal é obrigatório</em><br/>
+    
+    <label for="telefone">Telefone:</label>
+    <input #telefone="ngModel" required name="telefone" [(ngModel)]="cliente.telefone" type="text" placeholder="Telefone"
+       pattern="^(9[1236]\d{7}|2\d{8})$">
+    <em *ngIf="telefone.errors?.['pattern'] && telefone.touched && cliente.pais === 'Portugal'">Necessário Telefone válido</em>
+    <em *ngIf="telefone.errors?.['required'] && telefone.touched">O Telefone é obrigatório</em><br/><br/>
+    
+    <label for="genero">Género: </label>
+    <input type="radio" id="feminino" name="genero" value="F" required ngModel /> Feminino
+    <input type="radio" id="masculino" name="genero" value="M" required ngModel/> Masculino
+    <br/>
+    <em *ngIf="theForm.controls['genero'].errors?.['required']">O género é obrigatório</em><br/><br/><br/>
+    <button type="submit" [disabled]="theForm.form.invalid">
+      Enviar
+    </button>
+  </form>
+</section>
+
+<!--
+      <h1>Mostrar cidades de um país</h1>
+    <ul>
+      <li *ngFor="let p of paises">{{ p.nomePais }}
+        <ul *ngIf="p.nomePais === cliente.pais">
+          <li *ngFor="let c of p.cidades">{{ c.nomeCidade }}
+
+        </ul>
+      </li>
+    </ul>
+
+    <em *ngIf="pais.invalid && pais.touched">O país é obrigatório</em><br/>
+
+-->
+<!-- input type="submit" [disabled]=signInForm.form.invalid" value="Submit" -->
