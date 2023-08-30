@@ -14,6 +14,64 @@ import { ICliente, IPaises } from './form10.model';
 export class Form10Component {
   cliente: ICliente;
   paises: IPaises[];
+
+  validaIdade(datanasc: string){
+    const hoje = Date.now();
+    const dn = new Date(datanasc);
+    const diferenca = Math.abs(hoje - dn.getTime());
+    const idade = Math.floor((diferenca / (1000 * 3600 * 24)) / 365);
+  //  console.log(hoje, datanasc, dn, idade);
+    if(idade < 18){
+      return "3";
+    }
+    return "0";
+  }
+
+  validaNIF(nif: string) {
+    if( nif.length != 9 ){
+      return "1";
+    }
+    var num = parseInt(nif);
+    
+    let soma = 0;
+    var numa = new Array();
+    let j = 9;
+    for(var i = 0; i < 8 ; i++){
+      numa.push(parseInt(nif[i]));
+      soma = soma + numa[i] * j--;
+      if (isNaN(numa[i])){
+        return "4";
+      }
+    }
+    numa.push(parseInt(nif[8]));
+    if (isNaN(numa[8])){
+      return "4";
+    }
+    let resto = soma % 11;
+    // let quociente = ((soma - resto) / 11);
+    let teste = resto == 1 || resto == 0 ? 0 : 11 - resto;
+    // console.log(soma, quociente, resto, teste);
+    if(teste == numa[8]){
+      return "0";
+    } else {
+      return "3";
+    }
+ 
+    /*
+      '0' -  Correto, sem mensagem
+      '1' -  "O NIF tem nove dígitos"
+      '2' -  "Necessário um NIF válido"
+      '3' -  "Digito de controlo errado"
+      '4' -  "O NIF só pode ter algarismos"
+    for(var char of nif){
+      numa.push(parseInt(char));
+    }
+    */
+  }
+
+  onSubmit(cliente: ICliente){
+    console.log(cliente)
+  }
   
   constructor() {
     this.cliente = {
@@ -21,13 +79,13 @@ export class Form10Component {
       nome: "",
       email: "",
       nif: "",
-      datanasc: 0,
+      datanasc: "",
+      genero: "",
       pais: "",
       cidade: "",
       endereco: "",
       codpostal: "",
-      telefone: "",
-      genero: "M"
+      telefone: ""
     };
 
     this.paises = [

@@ -3,13 +3,13 @@ export interface ICliente {
     nome: string,
     email: string,
     nif: string,
-    datanasc: number,
+    datanasc: string,
+    genero: string,
     pais: string,
     cidade: string,
     endereco: string,
     codpostal: string,
-    telefone: string,
-    genero: 'M' | 'F'
+    telefone: string
 }
 
 export interface IPaises {

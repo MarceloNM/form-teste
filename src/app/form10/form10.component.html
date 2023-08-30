@@ -1,31 +1,35 @@
 
 <section>
   <h3>Formulário com dez campos de preenchimento obrigatório</h3><br/><br/>
-  <form #theForm="ngForm">
+  <form #theForm="ngForm" (ngSubmit)="onSubmit(cliente)">
     <label for="nome">Nome:</label>
-    <input #name="ngModel" required name="nome" [(ngModel)]="cliente.nome" type="text" placeholder="nome" size="40"><br/>
-    <em *ngIf="name.invalid && name.touched">O nome é obrigatório</em><br/>
+    <input #nome="ngModel" required name="nome" [(ngModel)]="cliente.nome" type="text" placeholder="nome" size="40"><br/>
+    <em *ngIf="nome.invalid && nome.touched"> O nome é obrigatório</em><br/>
 
     <label for="email">Email:</label>
     <input #email="ngModel" required name="email" [(ngModel)]="cliente.email" type="text" placeholder="email" size="30"
-    pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"> <br/>
-    <em *ngIf="email.errors?.['pattern'] && email.touched">Necessário e-mail válido</em>
-    <em *ngIf="email.errors?.['required'] && email.touched">O e-mail obrigatório</em><br/>
+    pattern="\S+@\S+\.\S+"> <br/>
+    <em *ngIf="email.errors?.['pattern'] && email.touched"> Necessário e-mail válido</em>
+    <em *ngIf="email.errors?.['required'] && email.touched"> O e-mail obrigatório</em><br/>
 
     <label for="nif">NIF:</label>
-    <input #nif="ngModel" required name="nif" [(ngModel)]="cliente.nif" type="text" placeholder="NIF" size="8">
-    <em *ngIf="nif.invalid && nif.touched">O NIF é obrigatório</em><br/><br/>
+    <input #nif="ngModel" required name="nif" [(ngModel)]="cliente.nif" type="text" placeholder="NIF" size="8"
+    pattern="^[123]\d{8}|45\d{7}|5\d{8}">
+    <em *ngIf="nif.errors?.['pattern'] && nif.touched"> Necessário NIF válido</em>
+    <em *ngIf="nif.errors?.['required'] && nif.touched"> O NIF é obrigatório</em>
+    <em *ngIf="validaNIF(cliente.nif) === '3' "> Dígito de controlo errado </em><br/>
 
-    <label for="datanasc">Data de nascimento:</label>
-    <input #datanasc="ngModel" required name="datanasc" [(ngModel)]="cliente.datanasc" type="date" placeholder="Data">
-    <em *ngIf="datanasc.invalid && datanasc.touched">A data de nascimento é obrigatória</em><br/><br/>
+    <label for="datanasc">Data nascimento:</label>
+    <input #datanasc="ngModel" required name="datanasc" [(ngModel)]="cliente.datanasc" type="text" placeholder="aaaa-mm-dd" size="10">
+    <em *ngIf="datanasc.invalid && datanasc.touched"> Data obrigatória</em>
+    <em *ngIf="validaIdade(cliente.datanasc) === '3' "> Não tem 18 anos </em><br/>
 
     <label for="pais">País: </label>
     <select #pais="ngModel" required name="pais" type="select" [(ngModel)]="cliente.pais">
       <option *ngFor="let option of paises"
         [ngValue]="option.nomePais">{{option.nomePais}}</option>
     </select> <br/>
-    <em *ngIf="pais.invalid && pais.touched">O país é obrigatório</em><br/>
+    <em *ngIf="pais.invalid && pais.touched"> O país é obrigatório</em><br/>
 
     <label for="cidade">Cidade: </label>
     <select #cidade="ngModel" required name="cidade" type="select" [(ngModel)]="cliente.cidade">
@@ -37,29 +41,30 @@
         </ng-container>
       </ng-container>
     </select> <br/>
-    <em *ngIf="cidade.invalid && cidade.touched">A cidade é obrigatória</em><br/>
+    <em *ngIf="cidade.invalid && cidade.touched"> A cidade é obrigatória</em><br/>
     
     <label for="endereco">Endereço:</label>
     <input #endereco="ngModel" required name="endereco" [(ngModel)]="cliente.endereco" type="text" placeholder="Endereço" size="40"><br/>
-    <em *ngIf="endereco.invalid && endereco.touched">O endereço é obrigatório</em><br/>
+    <em *ngIf="endereco.invalid && endereco.touched"> O endereço é obrigatório</em><br/>
     
     <label for="codpostal">Código Postal:</label>
     <input #codpostal="ngModel" required name="codpostal" [(ngModel)]="cliente.codpostal" type="text" placeholder="Código Postal"
     pattern="^\d{4}(-\d{3})?$" size="10">
     <em *ngIf="codpostal.errors?.['pattern'] && codpostal.touched && cliente.pais === 'Portugal'">Necessário Código Postal válido</em>
-    <em *ngIf="codpostal.errors?.['required'] && codpostal.touched">O Código Postal é obrigatório</em><br/>
+    <em *ngIf="codpostal.errors?.['required'] && codpostal.touched"> O Código Postal é obrigatório</em><br/>
     
     <label for="telefone">Telefone:</label>
     <input #telefone="ngModel" required name="telefone" [(ngModel)]="cliente.telefone" type="text" placeholder="Telefone"
        pattern="^(9[1236]\d{7}|2\d{8})$">
-    <em *ngIf="telefone.errors?.['pattern'] && telefone.touched && cliente.pais === 'Portugal'">Necessário Telefone válido</em>
-    <em *ngIf="telefone.errors?.['required'] && telefone.touched">O Telefone é obrigatório</em><br/><br/>
+    <em *ngIf="telefone.errors?.['pattern'] && telefone.touched && cliente.pais === 'Portugal'"> Necessário Telefone válido</em>
+    <em *ngIf="telefone.errors?.['required'] && telefone.touched"> O Telefone é obrigatório</em><br/><br/>
     
     <label for="genero">Género: </label>
-    <input type="radio" id="feminino" name="genero" value="F" required ngModel /> Feminino
-    <input type="radio" id="masculino" name="genero" value="M" required ngModel/> Masculino
+    <input type="radio" #genero="ngModel" name="genero" value="F" required [(ngModel)]="cliente.genero" /> Feminino
+    <input type="radio" #genero="ngModel" name="genero" value="M" required [(ngModel)]="cliente.genero"/> Masculino
     <br/>
-    <em *ngIf="theForm.controls['genero'].errors?.['required']">O género é obrigatório</em><br/><br/><br/>
+    <em *ngIf="genero.errors?.['required'] && genero.touched"> O género é obrigatório</em><br/><br/><br/>
+    
     <button type="submit" [disabled]="theForm.form.invalid">
       Enviar
     </button>
@@ -76,8 +81,21 @@
         </ul>
       </li>
     </ul>
-
+    "^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$"
     <em *ngIf="pais.invalid && pais.touched">O país é obrigatório</em><br/>
+<h5>Teste ao teste</h5>
+
+<p> {{validaIdade(cliente.datanasc0)}} </p>
+<input #datanasc0="ngModel" required name="datanasc0" [(ngModel)]="cliente.datanasc0" type="text" placeholder="dd-mm-aaaa">
+<em *ngIf="datanasc0.invalid && datanasc.touched"> A data de nascimento é obrigatória</em>
+<em *ngIf="validaIdade(cliente.datanasc0) === '3' "> Não tem 18 anos </em><br/>
+{{cliente.datanasc0}}
+<br/>
+
+        <input #datanasc="ngModel" required name="datanasc" [(ngModel)]="cliente.datanasc" type="date" placeholder="Data">
+    <em *ngIf="datanasc.invalid && datanasc.touched"> A data de nascimento é obrigatória</em><br/><br/>
+
+
 
 -->
 <!-- input type="submit" [disabled]=signInForm.form.invalid" value="Submit" -->
